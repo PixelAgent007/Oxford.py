@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Oxford.py",
-    version="0.0.3",
+    version="0.0.4",
     author="Haider Ali",
     author_email="ali075398@gmail.com",
     description="Oxford API wrapper",

@@ -18,7 +18,7 @@ This returns that whole massive dict so if you want to work with this you can.
 
 ```py
 import asyncio
-from oxford import Oxford
+from oxford.wrapper import Oxford
 x = Oxford(your_app_id, your_app_key, language ='en-gb')
 async def main():
     data = await x.api_request('People')
@@ -31,7 +31,7 @@ loop.run_until_complete(main())
 `Oxford.get_word_defination()`
 ```py
 import asyncio
-from oxford import Oxford
+from oxford.wrapper import Oxford
 x = Oxford(your_app_id, your_app_key, language ='en-gb')
 async def main():
     data = await x.get_word_defination('People')
