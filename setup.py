@@ -5,8 +5,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Oxford.py",
-    version="0.0.4",
-    author="Haider Ali",
+    version="0.0.6",
+    authors=["Haider Ali", "Oskar Manhart"],
     author_email="ali075398@gmail.com",
     description="Oxford API wrapper",
     long_description=long_description,
@@ -23,5 +23,5 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.6",
-    install_requires=['aiohttp']
+    install_requires=['aiohttp', 'requests']
 )

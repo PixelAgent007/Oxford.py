@@ -1,44 +1,60 @@
-### Oxford.py
+### Oxford.py – A simple wrapper for the Oxford API.
 
-What is this package for?
+##### What is this package for?
 
-This package wrappers Oxford api. Why? The oxford api returns large amount of `dict` which hard to read so we decided to simplify it for the oxforfd api users. This package is open source [CONTRIBUTE HERE](https://github.com/ProjectsWithPython/Oxford.py)
+This package is a wrapper for the Oxford API. 
+Why? The oxford api returns large amount of `dict` which hard to read so we decided to simplify it for the users. 
+(Get your API key and App ID from https://developer.oxforddictionaries.com/)
 
+##### Usage
+The package provides 2 classes, `SyncClient` and `AsyncClient`. 
+The methods for the `AsyncClient` class are asynchronous and the methods for the `SyncClient` class are synchronous, but the same.
+If the `debug` variable is set to true when creating the `SyncClient` or `AsyncClient` object, the package will print the parsed api response to the console.
 
-Get your API key and App ID from https://developer.oxforddictionaries.com/
+Synchronous Example:
+```python
+from oxford import SyncClient
 
-**Uses:**
+client = SyncClient("your_app_id", "your_app_key", language="en-gb")
 
-*This package works asynchronous.*
+def main():
+    definition = client.define("People")[0] # so we get the first definition
+    print(definition)
 
-`Oxford.api_request`
+main()
+```
 
-This returns that whole massive dict so if you want to work with this you can.
-
-
-```py
+Asynchronous Example:
+```python
+from oxford import AsyncClient
 import asyncio
-from oxford.wrapper import Oxford
-x = Oxford(your_app_id, your_app_key, language ='en-gb')
+
+client = AsyncClient("your_app_id", "your_app_key", language="en-gb")
+
 async def main():
-    data = await x.api_request('People')
-    return data
+    definition = client.define("People")[0] # so we get the first definition
+    print(definition)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
+
 ```
 
-`Oxford.get_word_defination()`
-```py
-import asyncio
-from oxford.wrapper import Oxford
-x = Oxford(your_app_id, your_app_key, language ='en-gb')
-async def main():
-    data = await x.get_word_defination('People')
-    return data
+##### Documentation
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
-```
+`SyncClient.api_request`
+This returns the whole massive API response wrapped in a`dict`, so if you want to work with this you can.
 
-And much more, I'll leave them to you to explore :)
+`SyncClient.get_word_definition(word: str)` (or `SyncClient.define(word: str)`)
+This returns an array with all definitions of the word.
+
+`SyncClient.get_word_examples(word: str)`
+This returns an array with example phrases and/or sentences of the word.
+
+`SyncClient.get_audio_file(word: str)`
+This returns an url to an audio file containing the word's pronunciation.
+
+`SyncClient.get_synonyms(word: str)`
+This returns an array with synonyms of the word.
+
+[This package is open source. Contribute here.](https://github.com/ProjectsWithPython/Oxford.py)
