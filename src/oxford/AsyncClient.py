@@ -1,5 +1,7 @@
 import aiohttp
 
+from oxford import Exceptions
+
 
 class AsyncClient:
     """Async wrapper for Oxford API"""
@@ -20,6 +22,8 @@ class AsyncClient:
                 res = await response.json()
                 if self.debug:
                     print(res)
+                if response.status == 404:
+                    raise Exceptions.WordNotFound
                 return res
 
     async def get_word_definition(self, word: str) -> list[str]:

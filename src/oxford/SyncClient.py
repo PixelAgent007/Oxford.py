@@ -1,5 +1,7 @@
 import requests
 
+from oxford import Exceptions
+
 
 class SyncClient:
     """Sync Wrapper for Oxford API"""
@@ -16,6 +18,8 @@ class SyncClient:
         Normal api requests returns a huge dict
         """
         res = requests.request("GET", f"{self.url}{word.lower()}", headers=self.header)
+        if res.status_code == 404:
+            raise Exceptions.WordNotFound
         return res.json()
 
     def get_word_definition(self, word: str) -> list[str]:
