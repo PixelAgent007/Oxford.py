@@ -3,7 +3,7 @@
 #### What is this package for?
 
 This package is a wrapper for the Oxford API. 
-Why? The oxford api returns large amount of `dict` which hard to read so we decided to simplify it for the users. 
+Why? The Oxford API returns large amount of `dict` which hard to read, so we decided to simplify it for the users. 
 (Get your API key and App ID from https://developer.oxforddictionaries.com/)
 
 #### Usage
@@ -18,7 +18,7 @@ from oxford import SyncClient
 client = SyncClient("your_app_id", "your_app_key", language="en-gb")
 
 def main():
-    definition = client.define("People")[0] # so we get the first definition
+    definition = client.define("People")[0]  # so we get the first definition
     print(definition)
 
 main()
@@ -31,8 +31,10 @@ import asyncio
 
 client = AsyncClient("your_app_id", "your_app_key", language="en-gb")
 
+
 async def main():
-    definition = client.define("People")[0] # so we get the first definition
+    definitions = await client.define("People")
+    definition = definitions[0]  # so we get the first definition
     print(definition)
 
 loop = asyncio.get_event_loop()

@@ -1,8 +1,10 @@
 import aiohttp
 
+from oxford import Exceptions
+
 
 class AsyncClient:
-    "Async wrapper for Oxford API"
+    """Async wrapper for Oxford API"""
     def __init__(self, app_id: str, app_key: str, language: str = 'en-gb', debug: bool = False) -> None:
         self.app_id = app_id
         self.app_key = app_key
@@ -20,6 +22,8 @@ class AsyncClient:
                 res = await response.json()
                 if self.debug:
                     print(res)
+                if response.status == 404:
+                    raise Exceptions.WordNotFound
                 return res
 
     async def get_word_definition(self, word: str) -> list[str]:
@@ -27,8 +31,12 @@ class AsyncClient:
         data = await self.api_request(word)
         definitions = []
         for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses']:
-            for e in i['definitions']:
-                definitions.append(e['text'])
+            try:
+                for e in i['definitions']:
+                    definitions.append(e)
+            except KeyError:
+                cross_reference = await self.get_word_definition(i['crossReferences'][0]['text'])
+                definitions.extend(cross_reference)
 
         return definitions
 
@@ -40,8 +48,12 @@ class AsyncClient:
         data = await self.api_request(word)
         examples = []
         for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses']:
-            for e in i['examples']:
-                examples.append(e['text'])
+            try:
+                for e in i['examples']:
+                    examples.append(e['text'])
+            except KeyError:
+                cross_reference = await self.get_word_examples(i['crossReferences'][0]['text'])
+                examples.extend(cross_reference)
 
         return examples
 
