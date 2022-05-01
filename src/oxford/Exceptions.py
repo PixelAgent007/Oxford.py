@@ -1,2 +1,8 @@
-class WordNotFound(Exception):
+
+
+class WordNotFoundException(Exception):
+    pass
+
+
+class HttpException(Exception):
     pass

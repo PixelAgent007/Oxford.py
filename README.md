@@ -45,7 +45,7 @@ loop.run_until_complete(main())
 #### Documentation
 
 `SyncClient.api_request`
-This returns the whole massive API response wrapped in a`dict`, so if you want to work with this you can.
+This returns the whole massive API response wrapped in a `dict`, so if you want to work with this you can.
 
 `SyncClient.get_word_definition(word: str)` (or `SyncClient.define(word: str)`)
 This returns an array with all definitions of the word.
@@ -58,5 +58,12 @@ This returns an url to an audio file containing the word's pronunciation.
 
 `SyncClient.get_synonyms(word: str)`
 This returns an array with synonyms of the word.
+
+`WordNotFoundException`
+This exception is thrown if the word is not found in the dictionary (or the server returns a 404). If debug is set to true, the server response will be printed to the console.
+
+`HttpException`
+This exception is thrown if the server returns anything other than 404 or 200 together with a message to help with debugging. If debug is set to true, the server response will be printed to the console.
+
 
 [This package is open source. Contribute here.](https://github.com/ProjectsWithPython/Oxford.py)

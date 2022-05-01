@@ -15,25 +15,44 @@ class SyncClient:
 
     def api_request(self, word: str) -> dict:
         """
-        Normal api requests returns a huge dict
+        Normal api requests return a huge dict
         """
         res = requests.request("GET", f"{self.url}{word.lower()}", headers=self.header)
-        if res.status_code == 404:
-            raise Exceptions.WordNotFound
-        return res.json()
+        if res.status_code == 200:
+            return res.json()
+
+        elif res.status_code == 401:
+            if self.debug:
+                print(res)
+            raise Exceptions.HttpException(f"Server returned 401 Unauthorized. Check your API Token / App ID.")
+
+        elif res.status_code == 403:
+            if self.debug:
+                print(res)
+            raise Exceptions.HttpException(f"Server returned 403 Rate Limit Exceeded. Check your API Token / App ID. If you are using a free Introductory plan, you can only make 60 requests per minute and a maximum of 1000 per month.")
+
+        elif res.status_code == 404:
+            if self.debug:
+                print(res)
+            raise Exceptions.WordNotFoundException(f"Word {word} not found.")
+
+        elif str(res.status_code).startswith('5'):
+            if self.debug:
+                print(res)
+            raise Exceptions.HttpException(f"Server returned {res.status_code}. Check the Oxford status page (https://status.ox.ac.uk), the API may be down.")
+
+        else:
+            if self.debug:
+                print(res)
+            raise Exceptions.HttpException(f"A unknown error occured. Check your internet connection and your API token / client ID. (Server returned status code {res.status_code})")
 
     def get_word_definition(self, word: str) -> list[str]:
         """Returns list of definitions of the word"""
         data = self.api_request(word)
-
         definitions = []
         for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses']:
-            try:
-                for e in i['definitions']:
-                    definitions.append(e)
-            except KeyError:
-                cross_reference = self.get_word_definition(i['crossReferences'][0]['text'])
-                definitions.extend(cross_reference)
+            for e in i['definitions']:
+                definitions.append(e)
 
         return definitions
 
@@ -45,31 +64,22 @@ class SyncClient:
         data = self.api_request(word)
         examples = []
         for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses']:
-            try:
-                for e in i['examples']:
-                    examples.append(e['text'])
-            except KeyError:
-                cross_reference = self.get_word_examples(i['crossReferences'][0]['text'])
-                examples.extend(cross_reference)
+            for e in i['examples']:
+                examples.append(e['text'])
 
         return examples
 
-    def get_audio_file(self, word) -> str:
+    def get_audio_file(self, word: str) -> str:
         """Get audio file which tells you how to pronounce the word"""
         data = self.api_request(word)
+
         return data['results'][0]['lexicalEntries'][0]['entries'][0]['pronunciations'][0]['audioFile']
 
-    def get_synonyms(self, word):
+    def get_synonyms(self, word: str) -> list[str]:
         """Get synonyms for the word"""
-        try:
-            data = self.api_request(word)
-            synonyms = []
-            for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses'][0]['synonyms']:
-                synonyms.append(i['text'])
+        data = self.api_request(word)
+        synonyms = []
+        for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses'][0]['synonyms']:
+            synonyms.append(i['text'])
 
-            return synonyms
-
-        except Exception as e:
-            if self.debug:
-                print(e)
-            return "No Synonyms Found!"
+        return synonyms
