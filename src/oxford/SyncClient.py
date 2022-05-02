@@ -74,6 +74,7 @@ class SyncClient:
             except KeyError:
                 cross_reference = self.get_word_examples(i['crossReferences'][0]['text'])
                 examples.extend(cross_reference)
+                
         return examples
 
     def get_audio_file(self, word: str) -> str:
@@ -91,7 +92,7 @@ class SyncClient:
                 for e in i['synonyms']:
                     synonyms.append(e)
             except KeyError:
-                cross_reference = self.get_word_definition(i['crossReferences'][0]['text'])
+                cross_reference = self.get_synonyms(i['crossReferences'][0]['text'])
                 synonyms.extend(cross_reference)
 
         return synonyms

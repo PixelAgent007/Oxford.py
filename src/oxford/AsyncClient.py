@@ -55,8 +55,12 @@ class AsyncClient:
         data = await self.api_request(word)
         definitions = []
         for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses']:
-            for e in i['definitions']:
-                definitions.append(e)
+            try:
+                for e in i['definitions']:
+                    definitions.append(e)
+            except KeyError:
+                cross_reference = await self.get_word_definition(i['crossReferences'][0]['text'])
+                definitions.extend(cross_reference)
 
         return definitions
 
@@ -68,8 +72,12 @@ class AsyncClient:
         data = await self.api_request(word)
         examples = []
         for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses']:
-            for e in i['examples']:
-                examples.append(e['text'])
+            try:
+                for e in i['examples']:
+                    examples.append(e)
+            except KeyError:
+                cross_reference = await self.get_word_examples(i['crossReferences'][0]['text'])
+                examples.extend(cross_reference)
 
         return examples
 
@@ -83,7 +91,12 @@ class AsyncClient:
         """Get synonyms for the word"""
         data = await self.api_request(word)
         synonyms = []
-        for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses'][0]['synonyms']:
-            synonyms.append(i['text'])
+        for i in data['results'][0]['lexicalEntries'][0]['entries'][0]['senses']:
+            try:
+                for e in i['synonyms']:
+                    synonyms.append(e)
+            except KeyError:
+                cross_reference = await self.get_synonyms(i['crossReferences'][0]['text'])
+                synonyms.extend(cross_reference)
 
         return synonyms
